@@ -60,6 +60,20 @@ data/outputs/
 data/inputs/_web_uploads/
 config/last_choice.json
 
+# Local scripts/tools
+1-git-push-auto.bat
+
+# AI assistant / local tooling
+.claude/
+.kiro/
+
+# Local config overrides / secrets
+.env.*
+!.env.example
+*.local.*
+*.secret.*
+*.secrets.*
+
 # Logs
 *.log
 logs/
