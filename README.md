@@ -7,7 +7,8 @@
 - 🤖 **多云平台支持**：阿里云DashScope、豆包/火山方舟、魔塔ModelScope、腾讯混元
 - 🖼️ **批量图片处理**：支持多张图片同时处理，自动压缩优化
 - 📝 **结构化信息抽取**：从图片中提取JSON格式数据
-- 🌐 **Web界面 + CLI**：两种使用方式，灵活选择
+- 🌐 **前后端分离**：后端 FastAPI + 前端 Vue
+- 💻 **CLI**：保留命令行入口，便于脚本化运行
 - 🔧 **环境检测工具**：自动检测环境配置，给出修复建议
 
 ## 🚀 快速开始
@@ -15,7 +16,7 @@
 ### 1. 安装依赖
 
 ```bash
-pip install -r requirements.txt
+pip install -r backend/requirements.txt
 ```
 
 ### 2. 配置 API 密钥
@@ -43,10 +44,11 @@ HUNYUAN_API_KEY=your_key
 
 ```bash
 # 自动检测（推荐）
-python check_auto.py
+cd backend
+python scripts/check_auto.py
 
 # 交互式检测
-python check_interactive.py
+python scripts/check_interactive.py
 
 # 项目健康检查
 python tests/check_project.py
@@ -55,32 +57,36 @@ python tests/check_project.py
 ### 4. 启动
 
 ```bash
-# 启动器（推荐）
-python main.py
+# 1) 启动后端 API (FastAPI)
+cd backend
+python run_api.py
 
-# 或直接启动
-python run_web.py      # Web 界面
-python run_cli.py --select  # 命令行（交互选择模型）
+# 2) 启动前端 (Vue)
+cd ..\\frontend
+npm install
+npm run dev
+
+# (可选) CLI
+cd ..\\backend
+python run_cli.py --select
 ```
+
+- 前端: http://127.0.0.1:5173
+- 后端 OpenAPI: http://127.0.0.1:8000/docs
 
 ## 📁 项目结构
 
 ```
-├── check_auto.py           # 自动检测（推荐）
-├── check_interactive.py    # 交互式检测
-├── main.py                 # 应用启动器
-├── run_cli.py              # CLI 运行入口
-├── run_web.py              # Web 界面入口
-├── config/
-│   ├── models.yml          # 模型配置
-│   └── prompts/            # 提示词模板
-├── data/
-│   ├── inputs/             # 输入图片
-│   └── outputs/            # 输出结果
-├── src/                    # 核心代码
-├── tests/                  # 测试和检测工具
-├── web/                    # Web 界面
-└── docs/                   # 文档
+├── frontend/                  # 前端 (Vue)
+├── backend/                   # 后端 (FastAPI + 核心处理逻辑)
+│   ├── run_api.py             # 后端 API 入口
+│   ├── run_cli.py             # CLI 入口
+│   ├── src/backend/           # 后端源码包
+│   ├── scripts/               # 检测脚本
+│   ├── tests/                 # 测试和检测工具
+│   ├── config/                # 模型配置、提示词库
+│   └── data/                  # 输入/输出数据
+└── docs/                      # 文档
 ```
 
 ## 🤖 支持的云平台
@@ -96,16 +102,22 @@ python run_cli.py --select  # 命令行（交互选择模型）
 
 ```bash
 # 环境检测
-python check_auto.py          # 自动检测
-python tests/check_project.py # 项目健康检查
+cd backend
+python scripts/check_auto.py
+python tests/check_project.py
 
-# 运行
-python run_cli.py --select    # CLI交互选择模型
-python run_web.py             # Web界面
+# 后端 + 前端
+python run_api.py             # FastAPI 后端
+cd ..\\frontend; npm run dev  # Vue 前端
+
+# (可选) CLI
+cd ..\\backend
+python run_cli.py --select
 
 # 测试
-python tests/test_all.py      # 运行测试
-python tests/quick_check.py   # 快速检查
+cd backend
+python tests/test_all.py
+python tests/quick_check.py
 ```
 
 ## 📖 文档

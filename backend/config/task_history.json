@@ -1,0 +1,62 @@
+[
+  {
+    "timestamp": "2026-01-22T17:28:44.767743",
+    "provider": "modelscope",
+    "model": "qwen2.5-vl-72b-instruct",
+    "file_count": 1,
+    "success_count": 1,
+    "failed_count": 0,
+    "success": true,
+    "output_dir": "D:\\Application\\A_Develop\\SourceCode\\Py\\api_models_connect\\backend\\data\\outputs\\Qwen-Qwen2.5-VL-72B-Instruct"
+  },
+  {
+    "timestamp": "2026-01-22T16:35:37.218084",
+    "provider": "modelscope",
+    "model": "qwen2.5-vl-72b-instruct",
+    "file_count": 1,
+    "success_count": 1,
+    "failed_count": 0,
+    "success": true,
+    "output_dir": "D:\\Application\\A_Develop\\SourceCode\\Py\\api_models_connect\\backend\\data\\outputs\\Qwen-Qwen2.5-VL-72B-Instruct"
+  },
+  {
+    "timestamp": "2026-01-22T16:33:34.486024",
+    "provider": "aliyun",
+    "model": "qwen_vl_max",
+    "file_count": 1,
+    "success_count": 0,
+    "failed_count": 1,
+    "success": false,
+    "output_dir": "D:\\Application\\A_Develop\\SourceCode\\Py\\api_models_connect\\backend\\data\\outputs\\qwen-vl-max"
+  },
+  {
+    "timestamp": "2026-01-22T16:26:23.595398",
+    "provider": "aliyun",
+    "model": "qwen2.5-vl-7b-instruct",
+    "file_count": 1,
+    "success_count": 1,
+    "failed_count": 0,
+    "success": true,
+    "output_dir": "D:\\Application\\A_Develop\\SourceCode\\Py\\api_models_connect\\backend\\data\\outputs\\qwen2.5-vl-7b-instruct"
+  },
+  {
+    "timestamp": "2026-01-22T16:26:06.545305",
+    "provider": "aliyun",
+    "model": "qwen2.5-vl-7b-instruct",
+    "file_count": 1,
+    "success_count": 1,
+    "failed_count": 0,
+    "success": true,
+    "output_dir": "D:\\Application\\A_Develop\\SourceCode\\Py\\api_models_connect\\backend\\data\\outputs\\qwen2.5-vl-7b-instruct"
+  },
+  {
+    "timestamp": "2026-01-22T16:25:38.061168",
+    "provider": "modelscope",
+    "model": "qwen2.5-vl-72b-instruct",
+    "file_count": 1,
+    "success_count": 1,
+    "failed_count": 0,
+    "success": true,
+    "output_dir": "D:\\Application\\A_Develop\\SourceCode\\Py\\api_models_connect\\backend\\data\\outputs\\Qwen-Qwen2.5-VL-72B-Instruct"
+  }
+]

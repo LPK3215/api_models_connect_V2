@@ -56,12 +56,15 @@ coverage.xml
 dmypy.json
 
 # Project specific
-data/outputs/
-data/inputs/_web_uploads/
-config/last_choice.json
+backend/data/outputs/
+backend/data/inputs/_web_uploads/
+backend/data/inputs/_api_uploads/
+frontend/node_modules/
+frontend/dist/
+backend/config/last_choice.json
 
 # Local scripts/tools
-1-git-push-auto.bat
+backend/scripts/1-git-push-auto.bat
 
 # AI assistant / local tooling
 .claude/
