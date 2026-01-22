@@ -1,0 +1,107 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "multimodal-batch-processor"
+version = "2.0.0"
+description = "多模态批处理系统 - 现代化的多云平台图片批处理工具，支持Web管理系统和CLI"
+readme = "README.md"
+requires-python = ">=3.8"
+license = { text = "MIT" }
+authors = [
+    { name = "Multimodal Processor Team", email = "contact@example.com" }
+]
+keywords = ["multimodal", "ai", "batch-processing", "computer-vision", "web-ui", "cli"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
+# 核心依赖 - 云API模式
+dependencies = [
+    "openai>=1.0.0",
+    "pillow>=10.0.0",
+    "colorama>=0.4.6",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+# Web界面
+web = [
+    "gradio>=4.0.0",
+]
+
+# 本地模型支持（云服务器GPU环境）
+local = [
+    "torch>=2.0.0",
+    "transformers>=4.30.0",
+    "accelerate>=0.20.0",
+]
+
+# 量化支持
+quantization = [
+    "bitsandbytes>=0.40.0",
+]
+
+# 完整安装（包含所有功能）
+full = [
+    "gradio>=4.0.0",
+    "torch>=2.0.0",
+    "transformers>=4.30.0",
+    "accelerate>=0.20.0",
+    "bitsandbytes>=0.40.0",
+]
+
+# 开发依赖
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "black>=23.0.0",
+    "isort>=5.12.0",
+    "mypy>=1.0.0",
+    "flake8>=6.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/yourusername/multimodal-batch-processor"
+Repository = "https://github.com/yourusername/multimodal-batch-processor"
+Documentation = "https://github.com/yourusername/multimodal-batch-processor#readme"
+
+[project.scripts]
+multimodal-processor = "main:main"
+multimodal-web = "run_web:main"
+multimodal-cli = "run_cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src*", "web*", "tests*"]
+
+[tool.setuptools.package-data]
+"*" = ["*.yml", "*.yaml", "*.json", "*.md"]
+
+[tool.black]
+line-length = 100
+target-version = ['py310']
+
+[tool.isort]
+profile = "black"
+line_length = 100
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+addopts = ["--strict-markers", "-v"]

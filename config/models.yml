@@ -1,0 +1,309 @@
+# 默认模型配置（优先级高于上次选择）
+# 设置后，Web页面启动时会直接使用这个模型
+# 注释掉或删除此配置则使用上次选择的模型
+default_model:
+  provider: "modelscope"
+  model: "qwen2.5-vl-72b-instruct"
+
+providers:
+  aliyun:
+    key: aliyun
+    display_name: "阿里云 DashScope"
+    description: "阿里云通义千问（DashScope）平台，多模态与文本生成模型。"
+    homepage: "https://dashscope.aliyun.com/"
+    console_url: "https://dashscope.aliyun.com/playground"
+    docs_url: "https://help.aliyun.com/zh/dashscope/"
+    defaults:
+      api_base_url: "https://dashscope.aliyuncs.com/compatible-mode/v1"
+      env_key: "DASHSCOPE_API_KEY"
+
+    models:
+      qwen_vl_plus:
+        name: "qwen-vl-plus"
+        label: "通义千问 VL Plus 多模态模型"
+        info: "支持图片理解、OCR、视觉问答的多模态模型。"
+        env_key: "DASHSCOPE_API_KEY"
+        advantages:
+          - "支持中文多模态理解，适合票据、截图、文档图片"
+        use_cases:
+          - "票据/文档图片的信息提取"
+          - "界面截图理解、视觉问答"
+
+      qwen_vl_max:
+        name: "qwen-vl-max"
+        label: "通义千问 VL Max 多模态模型"
+        info: "更强视觉理解能力的多模态模型。"
+        env_key: "DASHSCOPE_API_KEY"
+        advantages:
+          - "更复杂场景的图片理解效果更好"
+        use_cases:
+          - "复杂图片的详细描述与推理"
+
+      qwen2.5-vl-7b-instruct:
+        name: "qwen2.5-vl-7b-instruct"
+        label: "通义千问 2.5 VL 基础多模态模型"
+        info: "通用多模态基础模型，适合基础视觉理解任务。"
+        env_key: "DASHSCOPE_API_KEY"
+        advantages:
+          - "适合通用多模态任务，成本相对较低"
+        use_cases:
+          - "图片描述、简单信息提取"
+
+      qwen-2.5-instruct:
+        name: "qwen-2.5-instruct"
+        label: "通义千问 2.5 文本通用模型"
+        info: "通用文本生成模型，适用于多种中文文本任务。"
+        api_base_url: "https://dashscope.aliyuncs.com/v1"
+        env_key: "DASHSCOPE_API_KEY"
+        advantages:
+          - "兼顾效果与成本的通用文本模型"
+        use_cases:
+          - "问答、写作辅助、总结、改写"
+
+      qwen-plus:
+        name: "qwen-plus"
+        label: "通义千问 Plus 文本模型"
+        info: "通义千问通用文本生成模型。"
+        advantages:
+          - "适合通用问答与文本生成"
+        use_cases:
+          - "日常问答与写作"
+
+  doubao:
+    key: doubao
+    display_name: "豆包 / 火山方舟 Ark"
+    description: "火山引擎旗下多模态与文本生成模型，提供 OpenAI 兼容接口。"
+    homepage: "https://www.volcengine.com/product/ark"
+    console_url: "https://console.volcengine.com/ark"
+    docs_url: "https://www.volcengine.com/docs/82379"
+    defaults:
+      api_base_url: "https://ark.cn-beijing.volces.com/api/v3"
+      env_key: "ARK_API_KEY"
+
+    models:
+      doubao-seed-1-6-vision-250815:
+        name: "doubao-seed-1-6-vision-250815"
+        label: "豆包多模态视觉模型"
+        info: "适合图片内容理解、票据/说明书文字识别与结构化提取的多模态模型。"
+        advantages:
+          - "支持中文场景的视觉理解与文字识别"
+          - "适合从照片中抽取关键信息（如保修条款、表格、票据等）"
+        use_cases:
+          - "保修卡/说明书关键信息提取"
+          - "票据、合同等图片内容的结构化抽取"
+
+      doubao_pro_32k:
+        name: "Doubao-pro-32k"
+        label: "豆包 Pro 文本模型（32k 上下文）"
+        info: "适合长文本理解、总结和结构化提取的高能力文本模型。"
+        advantages:
+          - "32k 上下文，适合长文档分析与摘要"
+          - "中文效果较好，适合报告、合同等场景"
+        use_cases:
+          - "长文档总结和结构化抽取"
+          - "阅读理解、问答"
+
+      doubao_lite_128k:
+        name: "Doubao-lite-128k"
+        label: "豆包 Lite 文本模型（128k 上下文，性价比高）"
+        info: "适合大批量调用、要求性价比的文本处理任务。"
+        advantages:
+          - "128k 上下文，支持较长文本"
+          - "价格相对低，适合批量任务"
+        use_cases:
+          - "大批量简单问答或分类"
+          - "批量内容清洗、改写"
+
+  modelscope:
+    key: modelscope
+    display_name: "魔塔 ModelScope 多模态模型"
+    description: "阿里通义、InternVL 等多模态大模型在 ModelScope 上的集合。"
+    homepage: "https://www.modelscope.cn/models"
+    console_url: "https://modelscope.cn/my/myaccesstoken"
+    docs_url: "https://modelscope.cn/docs/model-service/API-Inference/intro"
+    defaults:
+      api_base_url: "https://api-inference.modelscope.cn/v1"
+      env_key: "MODELSCOPE_ACCESS_TOKEN"
+
+    models:
+      qwen2.5-vl-72b-instruct:
+        name: "Qwen/Qwen2.5-VL-72B-Instruct"
+        label: "通义千问 2.5 VL 72B Instruct 多模态模型"
+        info: "大规模中文多模态模型，支持图像理解、视觉问答、OCR、视觉推理。"
+        advantages:
+          - "中文图像理解能力极强"
+          - "适合复杂视觉推理任务"
+          - "适合科研级别的多模态推理"
+        use_cases:
+          - "复杂图像分析"
+          - "多模态问答"
+          - "科研数据分析"
+
+      qvq-72b-preview:
+        name: "Qwen/QVQ-72B-Preview"
+        label: "QVQ 72B 多模态模型（Preview）"
+        info: "大规模视觉理解模型，擅长推理类视觉任务。"
+        advantages:
+          - "强大的多模态推理能力"
+          - "适合学术研究、视觉 reasoning"
+        use_cases:
+          - "高难度视觉推理"
+          - "复杂任务的多模态问答"
+
+      qwen3-vl-30b-a3b-instruct:
+        name: "Qwen/Qwen3-VL-30B-A3B-Instruct"
+        label: "通义千问 3 VL 30B Instruct"
+        info: "中型多模态模型，兼容性好，适合多种通用视觉任务。"
+        advantages:
+          - "较低的调用成本"
+          - "广泛适配图像理解任务"
+        use_cases:
+          - "图像描述"
+          - "简单视觉问答"
+
+      qwen3-vl-30b-a3b-thinking:
+        name: "Qwen/Qwen3-VL-30B-A3B-Thinking"
+        label: "通义千问 3 VL 30B Thinking"
+        info: "偏向深度思考的多模态模型，支持更强逻辑推理。"
+        advantages:
+          - "更强的视觉逻辑推理"
+          - "适合复杂场景解释"
+        use_cases:
+          - "复杂场景判断"
+          - "多模态思维链推理"
+
+      gui-owl-7b:
+        name: "iic/GUI-Owl-7B"
+        label: "GUI-Owl 多模态模型 7B"
+        info: "轻量级多模态视觉模型，适合 UI 截图理解和操作引导。"
+        advantages:
+          - "小模型、便宜"
+          - "擅长界面解析"
+        use_cases:
+          - "APP/网页界面理解"
+          - "视觉操作指引"
+
+      intern-s1:
+        name: "Shanghai_AI_Laboratory/Intern-S1"
+        label: "Intern-S1 视觉大模型（240B）"
+        info: "超大规模多模态模型，具有极高的视觉理解与推理能力。"
+        advantages:
+          - "240B 级别能力"
+          - "适合严苛专业领域"
+        use_cases:
+          - "科研级视觉分析"
+          - "复杂工业场景理解"
+
+      step3:
+        name: "stepfun-ai/step3"
+        label: "Step-3 多模态模型（320B）"
+        info: "超大型视觉模型，具有极强的视觉能力与 reasoning 能力。"
+        advantages:
+          - "适用高端科研"
+          - "能够处理极其复杂的场景"
+        use_cases:
+          - "长链路视觉推理"
+          - "复杂环境图像识别"
+
+      qwen3-vl-8b-instruct:
+        name: "Qwen/Qwen3-VL-8B-Instruct"
+        label: "通义千问 3 VL 8B Instruct"
+        info: "通用型 8B 多模态模型，适合大规模调用与普通场景。"
+        advantages:
+          - "成本低"
+          - "适合中文理解"
+        use_cases:
+          - "基础图像分析"
+          - "轻量多模态应用"
+
+      qwen2.5-vl-32b-instruct:
+        name: "Qwen/Qwen2.5-VL-32B-Instruct"
+        label: "通义千问 2.5 VL 32B Instruct"
+        info: "中大型中文多模态模型，在 OCR 和视觉结构化方面表现优秀。"
+        advantages:
+          - "强 OCR 能力"
+          - "适合文档图片理解"
+        use_cases:
+          - "说明书/票据提取"
+          - "复杂图像问答"
+
+      qwen3-vl-235b-a2b-instruct:
+        name: "Qwen/Qwen3-VL-235B-A2B-Instruct"
+        label: "通义千问 3 VL 235B Instruct"
+        info: "超大规模多模态模型，适合高强度科研任务。"
+        advantages:
+          - "极强的图像理解能力"
+          - "支持复杂工业、科研分析"
+        use_cases:
+          - "工业视觉分析"
+          - "实时复杂场景理解"
+
+      intern-s1-mini:
+        name: "Shanghai_AI_Laboratory/Intern-S1-mini"
+        label: "Intern-S1-mini 8B 模型"
+        info: "轻量版 InternVL，多模态基础模型。"
+        advantages:
+          - "模型轻量、成本低"
+        use_cases:
+          - "普通图像问答"
+          - "OCR + 图像描述"
+
+      ernie-4.5-vl-28b:
+        name: "PaddlePaddle/ERNIE-4.5-VL-28B-A3B-PT"
+        label: "ERNIE 4.5 VL 28B 多模态模型"
+        info: "百度多模态模型，擅长中文 OCR 图片理解。"
+        advantages:
+          - "中文文档理解好"
+        use_cases:
+          - "票据结构化"
+          - "文档 OCR"
+
+      internvl3.5-241b:
+        name: "OpenGVLab/InternVL3_5-241B-A28B"
+        label: "InternVL3.5 241B 多模态模型"
+        info: "超大规模视觉模型，擅长复杂推理与高精度视觉任务。"
+        advantages:
+          - "高精度视觉理解"
+        use_cases:
+          - "科研级视觉任务"
+          - "工业检测"
+
+  tencent:
+    key: tencent
+    display_name: "腾讯混元大模型"
+    description: "腾讯云混元大模型平台，提供文本与多模态生成能力。"
+    homepage: "https://cloud.tencent.com/product/hunyuan"
+    console_url: "https://console.cloud.tencent.com/hunyuan"
+    docs_url: "https://cloud.tencent.com/document/product/1729"
+    defaults:
+      api_base_url: "https://api.hunyuan.cloud.tencent.com/v1"
+      env_key: "HUNYUAN_API_KEY"
+
+    models:
+      hunyuan-vision:
+        name: "hunyuan-vision"
+        label: "混元多模态视觉理解模型"
+        info: "支持图片内容理解、OCR 和视觉问答的多模态模型。"
+        advantages:
+          - "对中文图片文字和文档场景有较好支持"
+        use_cases:
+          - "说明书、保修卡等文档图片的信息抽取"
+          - "通用图片内容理解和问答"
+
+      hunyuan-standard:
+        name: "hunyuan-standard"
+        label: "混元通用文本生成模型"
+        info: "适用于通用中文问答和文本生成任务的模型。"
+        advantages:
+          - "适合对话、问答和内容生成"
+        use_cases:
+          - "客服问答、写作辅助、内容改写"
+
+      hunyuan-lite:
+        name: "hunyuan-lite"
+        label: "混元 Lite 文本模型（性价比版本）"
+        info: "适合大批量调用的混元文本模型，兼顾成本与性能。"
+        advantages:
+          - "调用成本较低，适合批量任务"
+        use_cases:
+          - "批量文本分类、简单改写"

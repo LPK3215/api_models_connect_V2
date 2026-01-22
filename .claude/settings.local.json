@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -c \"import llamafactory; print(llamafactory.__version__)\")",
+      "Bash(python tests/check_project.py)",
+      "Bash(python tests/check_local.py)",
+      "Bash(python run_full_check.py)",
+      "Bash(ls -la *.py)",
+      "Bash(ls -la tests/*.py)",
+      "Bash(ls -la tests/checkers/*.py)",
+      "Bash(chmod +x check_auto.py check_interactive.py)",
+      "Bash(python check_auto.py)",
+      "Bash(grep -r \"check_all\\\\|run_full_check\" *.md *.py)",
+      "Bash(wc -l src/*.py src/*/*.py)",
+      "Bash(ls -la *.py *.md)",
+      "Bash(cat .gitignore)",
+      "Bash(ls -lh *.md)",
+      "Bash(ls -lh docs/*.md)"
+    ]
+  }
+}

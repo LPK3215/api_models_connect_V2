@@ -1,0 +1,26 @@
+name: "简单图片分析"
+description: "用于基础图片内容分析的简化提示词，适合快速测试和验证"
+category: "测试"
+tags: [ "测试", "简单分析", "图片识别", "JSON" ]
+created_at: "2024-12-17T10:30:00"
+updated_at: "2024-12-17T15:30:00"
+prompt: |
+  请分析上传的图片并返回JSON格式的结果。
+  
+  要求：
+  1. 仅输出合法的JSON格式
+  2. 包含以下字段：
+     - "main_content": 图片的主要内容描述
+     - "text_content": 图片中识别到的文字内容（如果有）
+     - "colors": 主要颜色特征
+     - "objects": 识别到的主要物体或元素
+     - "confidence": 分析置信度（high/medium/low）
+  
+  示例输出：
+  {
+    "main_content": "一张产品说明书的照片",
+    "text_content": "产品名称：XXX，型号：XXX",
+    "colors": ["白色", "黑色", "蓝色"],
+    "objects": ["文字", "表格", "图标"],
+    "confidence": "high"
+  }
