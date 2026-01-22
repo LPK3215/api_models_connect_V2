@@ -10,6 +10,7 @@
 - 🌐 **前后端分离**：后端 FastAPI + 前端 Vue
 - 💻 **CLI**：保留命令行入口，便于脚本化运行
 - 🔧 **环境检测工具**：自动检测环境配置，给出修复建议
+- 🧭 **Landing + Quick Run**：主页用于介绍产品，并可直接执行 Task Runner；更专注的运行页为 `/run`
 
 ## 🚀 快速开始
 
@@ -73,6 +74,8 @@ python run_cli.py --select
 
 - 前端: http://127.0.0.1:5173
 - 后端 OpenAPI: http://127.0.0.1:8000/docs
+- 主页: `/`（产品介绍 + Quick Run）
+- 运行: `/run`（专注 Task Runner）
 
 ## 📁 项目结构
 
@@ -88,6 +91,11 @@ python run_cli.py --select
 │   └── data/                  # 输入/输出数据
 └── docs/                      # 文档
 ```
+
+更详细的分模块说明：
+
+- 后端：`backend/README.md`
+- 前端：`frontend/README.md`
 
 ## 🤖 支持的云平台
 

@@ -1,5 +1,51 @@
-# Vue 3 + TypeScript + Vite
+# Frontend (Vue 3)
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+This folder contains the Vue 3 + TypeScript frontend for API Models Connect.
 
-Learn more about the recommended Project Setup and IDE Support in the [Vue Docs TypeScript Guide](https://vuejs.org/guide/typescript/overview.html#project-setup).
+## Requirements
+
+- Node.js 18+
+
+## Install
+
+```bash
+cd frontend
+npm install
+```
+
+## Configure API Origin
+
+By default the frontend calls the backend at `http://127.0.0.1:8000`.
+
+Optionally override via:
+
+- `frontend/.env.development` (`VITE_API_ORIGIN=...`)
+- or an environment variable: `VITE_API_ORIGIN`
+
+## Run (Dev)
+
+```bash
+cd frontend
+npm run dev
+```
+
+Frontend: `http://127.0.0.1:5173`
+
+## Build
+
+```bash
+cd frontend
+npm run build
+```
+
+## Routes
+
+- `/`: landing (product intro + quick run section)
+- `/run`: focused Task Runner (upload images -> pick model -> run)
+- `/dashboard`, `/models`, `/prompts`, `/history`, `/settings`: console modules
+
+## Design System Notes
+
+- Global styles: `frontend/src/style.css` (glassmorphism / light)
+- Generated references: `frontend/design-system/api-models-connect/`
+

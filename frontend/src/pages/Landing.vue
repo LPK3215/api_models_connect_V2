@@ -89,7 +89,7 @@ function providerConfigured(name: string) {
 <template>
   <div class="min-h-dvh">
     <header class="sticky top-0 z-50 border-b border-border/60 bg-white/55 backdrop-blur-xl">
-      <div class="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 md:px-6">
+      <div class="mx-auto flex max-w-[86rem] items-center justify-between gap-3 px-4 py-3 md:px-6">
         <div class="flex items-center gap-3">
           <div class="grid h-9 w-9 place-items-center rounded-2xl border border-border/70 bg-white/50 shadow-sm backdrop-blur">
             <Bolt class="h-4.5 w-4.5 text-primary" />
@@ -122,7 +122,7 @@ function providerConfigured(name: string) {
       </div>
 
       <div v-if="mobileMenu" class="md:hidden">
-        <div class="mx-auto max-w-7xl px-4 pb-4">
+        <div class="mx-auto max-w-[86rem] px-4 pb-4">
           <div class="glass-strong p-4">
             <div class="grid gap-3 text-sm font-semibold">
               <a class="text-muted hover:text-text transition-colors" href="#workflow" @click="mobileMenu = false">工作流</a>
@@ -140,9 +140,10 @@ function providerConfigured(name: string) {
       </div>
     </header>
 
-    <section class="mx-auto max-w-7xl px-4 py-10 md:px-6 md:py-16">
-      <div class="grid items-start gap-10 lg:grid-cols-[1.1fr_0.9fr]">
-        <div class="animate-fadeUp">
+    <section class="mx-auto max-w-[86rem] px-4 py-10 md:px-6 md:py-16">
+      <div class="glass p-6 md:p-8">
+        <div class="grid items-start gap-10 lg:grid-cols-2">
+          <div class="animate-fadeUp">
           <div class="inline-flex flex-wrap items-center gap-2 rounded-full border border-border/70 bg-white/45 px-3 py-1 text-xs font-semibold text-muted backdrop-blur">
             <span class="inline-flex items-center gap-1.5">
               <Wrench class="h-3.5 w-3.5 text-primary" />
@@ -187,68 +188,67 @@ function providerConfigured(name: string) {
             </span>
             <span class="pill font-mono">keys {{ configuredKeyCount }}/{{ totalKeyCount }}</span>
           </div>
+          </div>
+
+          <div class="animate-fadeUp [animation-delay:90ms]">
+            <RealtimeViz />
+          </div>
         </div>
 
-        <div class="animate-fadeUp [animation-delay:90ms]">
-          <div class="grid gap-3 md:grid-cols-2">
-            <div class="md:col-span-2">
-              <RealtimeViz />
-            </div>
-
-            <div class="glass p-5">
-              <div class="flex items-start justify-between gap-3">
-                <div class="min-w-0">
-                  <div class="text-xs font-semibold text-muted">一次任务由什么组成</div>
-                  <div class="mt-1 text-sm font-semibold">Provider + Model + Prompt + Images</div>
-                </div>
-                <span class="pill">task</span>
+        <div class="mt-6 grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+          <div class="rounded-2xl border border-border/70 bg-white/30 p-5 backdrop-blur-xl">
+            <div class="flex items-start justify-between gap-3">
+              <div class="min-w-0">
+                <div class="text-xs font-semibold text-muted">一次任务由什么组成</div>
+                <div class="mt-1 text-sm font-semibold">Provider + Model + Prompt + Images</div>
               </div>
-              <div class="mt-4 grid gap-2">
-                <div class="flex flex-wrap gap-2">
-                  <span class="pill border-primary/25 bg-white/45 text-primary">provider</span>
-                  <span class="pill border-primary/25 bg-white/45 text-primary">model</span>
-                  <span class="pill border-primary/25 bg-white/45 text-primary">prompt</span>
-                  <span class="pill border-primary/25 bg-white/45 text-primary">files</span>
-                </div>
-                <div class="rounded-2xl border border-border/70 bg-white/40 p-3 text-sm text-muted backdrop-blur">
-                  UI 负责选择与发起请求, 后端负责处理、落盘与记录历史.
-                </div>
+              <span class="pill">task</span>
+            </div>
+            <div class="mt-4 grid gap-2">
+              <div class="flex flex-wrap gap-2">
+                <span class="pill border-primary/25 bg-white/45 text-primary">provider</span>
+                <span class="pill border-primary/25 bg-white/45 text-primary">model</span>
+                <span class="pill border-primary/25 bg-white/45 text-primary">prompt</span>
+                <span class="pill border-primary/25 bg-white/45 text-primary">files</span>
+              </div>
+              <div class="rounded-2xl border border-border/70 bg-white/40 p-3 text-sm text-muted backdrop-blur">
+                UI 负责选择与发起请求, 后端负责处理、落盘与记录历史.
               </div>
             </div>
+          </div>
 
-            <div class="glass p-5">
-              <div class="flex items-start justify-between gap-3">
-                <div class="min-w-0">
-                  <div class="text-xs font-semibold text-muted">输出是可以复盘的</div>
-                  <div class="mt-1 text-sm font-semibold">结构化 JSON + 输出目录</div>
-                </div>
-                <span class="pill">local</span>
+          <div class="rounded-2xl border border-border/70 bg-white/30 p-5 backdrop-blur-xl">
+            <div class="flex items-start justify-between gap-3">
+              <div class="min-w-0">
+                <div class="text-xs font-semibold text-muted">输出是可以复盘的</div>
+                <div class="mt-1 text-sm font-semibold">结构化 JSON + 输出目录</div>
               </div>
-              <div class="mt-4 rounded-2xl border border-border/70 bg-white/40 p-3 font-mono text-[12px] leading-relaxed text-text backdrop-blur">
-                <div class="text-muted">{</div>
-                <div class="pl-4"><span class="text-muted">"summary"</span>: { <span class="text-muted">"ok"</span>: 12, <span class="text-muted">"fail"</span>: 0 },</div>
-                <div class="pl-4"><span class="text-muted">"results"</span>: [ ... ]</div>
-                <div class="text-muted">}</div>
-              </div>
+              <span class="pill">local</span>
             </div>
+            <div class="mt-4 rounded-2xl border border-border/70 bg-white/40 p-3 font-mono text-[12px] leading-relaxed text-text backdrop-blur">
+              <div class="text-muted">{</div>
+              <div class="pl-4"><span class="text-muted">"summary"</span>: { <span class="text-muted">"ok"</span>: 12, <span class="text-muted">"fail"</span>: 0 },</div>
+              <div class="pl-4"><span class="text-muted">"results"</span>: [ ... ]</div>
+              <div class="text-muted">}</div>
+            </div>
+          </div>
 
-            <div class="glass p-5 md:col-span-2">
-              <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                <div class="min-w-0">
-                  <div class="text-xs font-semibold text-muted">三种使用方式</div>
-                  <div class="mt-1 text-sm font-semibold">Web 控制台 / FastAPI / CLI</div>
-                  <div class="mt-2 text-sm text-muted">先在 UI 跑通流程, 再用 API 或 CLI 脚本化批量执行.</div>
-                </div>
-                <div class="flex flex-col gap-2 sm:flex-row">
-                  <RouterLink class="btn btn-primary justify-center" to="/run">
-                    <PlayCircle class="h-4 w-4" />
-                    Task Runner
-                  </RouterLink>
-                  <a class="btn justify-center" :href="openApiUrl" target="_blank" rel="noreferrer">
-                    <FileJson class="h-4 w-4" />
-                    API Docs
-                  </a>
-                </div>
+          <div class="rounded-2xl border border-border/70 bg-white/30 p-5 backdrop-blur-xl">
+            <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+              <div class="min-w-0">
+                <div class="text-xs font-semibold text-muted">三种使用方式</div>
+                <div class="mt-1 text-sm font-semibold">Web 控制台 / FastAPI / CLI</div>
+                <div class="mt-2 text-sm text-muted">先在 UI 跑通流程, 再用 API 或 CLI 脚本化批量执行.</div>
+              </div>
+              <div class="flex flex-col gap-2 sm:flex-row">
+                <RouterLink class="btn btn-primary justify-center" to="/run">
+                  <PlayCircle class="h-4 w-4" />
+                  Task Runner
+                </RouterLink>
+                <a class="btn justify-center" :href="openApiUrl" target="_blank" rel="noreferrer">
+                  <FileJson class="h-4 w-4" />
+                  API Docs
+                </a>
               </div>
             </div>
           </div>
@@ -256,7 +256,7 @@ function providerConfigured(name: string) {
       </div>
     </section>
 
-    <section id="quick-run" class="mx-auto max-w-7xl px-4 pb-12 md:px-6 md:pb-16">
+    <section id="quick-run" class="mx-auto max-w-[86rem] px-4 pb-12 md:px-6 md:pb-16">
       <div class="glass p-6">
         <div class="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
           <div class="min-w-0">
@@ -294,7 +294,7 @@ function providerConfigured(name: string) {
       </div>
     </section>
 
-    <section id="workflow" class="mx-auto max-w-7xl px-4 pb-12 md:px-6 md:pb-16">
+    <section id="workflow" class="mx-auto max-w-[86rem] px-4 pb-12 md:px-6 md:pb-16">
       <div class="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
         <div class="animate-fadeUp">
           <div class="text-xs font-semibold text-muted">Workflow</div>
@@ -352,7 +352,7 @@ function providerConfigured(name: string) {
       </div>
     </section>
 
-    <section id="modules" class="mx-auto max-w-7xl px-4 pb-12 md:px-6 md:pb-16">
+    <section id="modules" class="mx-auto max-w-[86rem] px-4 pb-12 md:px-6 md:pb-16">
       <div class="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
         <div>
           <div class="text-xs font-semibold text-muted">Console</div>
@@ -384,7 +384,7 @@ function providerConfigured(name: string) {
       </div>
     </section>
 
-    <section id="providers" class="mx-auto max-w-7xl px-4 pb-12 md:px-6 md:pb-16">
+    <section id="providers" class="mx-auto max-w-[86rem] px-4 pb-12 md:px-6 md:pb-16">
       <div class="grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
         <div>
           <div class="text-xs font-semibold text-muted">Providers</div>
@@ -424,7 +424,7 @@ function providerConfigured(name: string) {
       </div>
     </section>
 
-    <section id="outputs" class="mx-auto max-w-7xl px-4 pb-12 md:px-6 md:pb-16">
+    <section id="outputs" class="mx-auto max-w-[86rem] px-4 pb-12 md:px-6 md:pb-16">
       <div class="grid gap-6 lg:grid-cols-2">
         <div>
           <div class="text-xs font-semibold text-muted">Outputs</div>
@@ -473,7 +473,7 @@ function providerConfigured(name: string) {
       </div>
     </section>
 
-    <section id="get-started" class="mx-auto max-w-7xl px-4 pb-16 md:px-6 md:pb-24">
+    <section id="get-started" class="mx-auto max-w-[86rem] px-4 pb-16 md:px-6 md:pb-24">
       <div class="glass p-6">
         <div class="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
           <div class="min-w-0">
@@ -518,7 +518,7 @@ npm run dev</code></pre>
     </section>
 
     <footer class="border-t border-border/70 bg-white/35 backdrop-blur-xl">
-      <div class="mx-auto max-w-7xl px-4 py-10 md:px-6">
+      <div class="mx-auto max-w-[86rem] px-4 py-10 md:px-6">
         <div class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
           <div class="flex items-center gap-3">
             <div class="grid h-9 w-9 place-items-center rounded-2xl border border-border/70 bg-white/50 shadow-sm backdrop-blur">

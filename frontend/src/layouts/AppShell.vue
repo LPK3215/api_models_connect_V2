@@ -35,7 +35,7 @@ const mobileMenu = ref(false)
 
     <div v-else>
       <header class="sticky top-0 z-40 border-b border-border/60 bg-white/55 backdrop-blur-xl">
-        <div class="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 md:px-6">
+        <div class="mx-auto flex max-w-[86rem] items-center justify-between gap-3 px-4 py-3 md:px-6">
           <RouterLink to="/" class="flex items-center gap-3">
             <div class="grid h-9 w-9 place-items-center rounded-2xl border border-border/70 bg-white/50 shadow-sm backdrop-blur">
               <Home class="h-4.5 w-4.5 text-primary" />
@@ -71,7 +71,7 @@ const mobileMenu = ref(false)
         </div>
 
         <div v-if="mobileMenu" class="md:hidden">
-          <div class="mx-auto max-w-7xl px-4 pb-4">
+          <div class="mx-auto max-w-[86rem] px-4 pb-4">
             <div class="glass-strong p-3">
               <nav class="grid gap-1">
                 <RouterLink
@@ -91,7 +91,7 @@ const mobileMenu = ref(false)
         </div>
       </header>
 
-      <main class="mx-auto max-w-7xl px-4 py-6 md:px-6">
+      <main class="mx-auto max-w-[86rem] px-4 py-6 md:px-6">
         <RouterView />
       </main>
     </div>

@@ -65,10 +65,13 @@ backend/config/last_choice.json
 
 # Local scripts/tools
 backend/scripts/1-git-push-auto.bat
+1-git-push-auto.bat
 
 # AI assistant / local tooling
 .claude/
 .kiro/
+.cloud/
+.github/
 
 # Local config overrides / secrets
 .env.*

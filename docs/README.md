@@ -2,7 +2,7 @@
 
 ## 概述
 
-本项目是一个多云平台图片批处理工具，通过云API调用大模型处理图片，支持阿里云、豆包、魔塔、腾讯混元等平台。
+本项目是一个多云平台图片批处理工具，通过云 API 调用多模态大模型处理图片，支持阿里云、豆包/火山方舟、魔塔 ModelScope、腾讯混元等平台。
 
 ## 文档列表
 
@@ -18,10 +18,13 @@
 
 ### 本地开发环境
 
-1. 安装依赖：`pip install -r requirements.txt`
-2. 配置API密钥（在 `.env` 文件或环境变量中）
-3. 运行检测：`python check_auto.py`
-4. 启动应用：`python main.py`
+1. 安装后端依赖：`pip install -r backend/requirements.txt`
+2. 配置 API 密钥（在 repo 根目录 `.env` 或系统环境变量中）
+3. 后端环境检测：
+   - `cd backend; python scripts/check_auto.py`
+4. 启动后端 + 前端：
+   - 后端：`cd backend; python run_api.py`
+   - 前端：`cd frontend; npm install; npm run dev`
 
 ### 支持的云平台
 
@@ -35,16 +38,16 @@
 ## 项目结构
 
 ```
-├── src/                    # 核心代码
-│   ├── config.py           # 配置常量
-│   ├── config_loader.py    # 配置加载器
-│   ├── processor.py        # 处理管线
-│   ├── cli.py              # 命令行接口
-│   └── local/              # 云API处理模块
-├── web/                    # Web界面
-├── tests/                  # 测试和检测工具
-├── config/                 # 配置文件
-└── data/                   # 数据目录
+├── backend/                # 后端 (FastAPI + 核心处理逻辑)
+│   ├── run_api.py          # FastAPI 入口
+│   ├── run_cli.py          # CLI 入口
+│   ├── src/backend/        # 后端源码包
+│   ├── config/             # models.yml + prompts/*.yml
+│   ├── scripts/            # 环境检测脚本
+│   ├── tests/              # 测试与检查
+│   └── data/               # 输入/输出目录
+├── frontend/               # 前端 (Vue3 + TS + Tailwind)
+└── docs/                   # 文档
 ```
 
 ---
@@ -53,14 +56,16 @@
 
 ```bash
 # 环境检测
-python check_auto.py
+cd backend
+python scripts/check_auto.py
 python tests/check_project.py
 
-# 运行应用
-python main.py              # 启动器
-python run_cli.py --select  # CLI
-python run_web.py           # Web
+# 启动
+python run_api.py           # FastAPI 后端
+cd ..\frontend; npm run dev  # Vue 前端
+cd ..\backend; python run_cli.py --select  # (可选) CLI
 
 # 测试
-python tests/test_all.py
+cd backend
+pytest -q
 ```

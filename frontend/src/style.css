@@ -21,6 +21,15 @@
   --glass-br: 255 255 255;  /* used with alpha */
 }
 
+/* Global scale: keep mobile untouched, slightly larger UI on desktop/large screens. */
+html{ font-size: 16px; }
+@media (min-width: 1024px){
+  html{ font-size: 16.5px; }
+}
+@media (min-width: 1536px){
+  html{ font-size: 17px; }
+}
+
 html, body{ height: 100%; }
 body{ @apply bg-bg text-text antialiased; }
 
