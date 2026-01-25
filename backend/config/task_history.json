@@ -1,5 +1,55 @@
 [
   {
+    "timestamp": "2026-01-25T19:48:21.584385",
+    "provider": "modelscope",
+    "model": "qwen2.5-vl-72b-instruct",
+    "file_count": 1,
+    "success_count": 1,
+    "failed_count": 0,
+    "success": true,
+    "output_dir": "D:\\Application\\A_Develop\\SourceCode\\Py\\api_models_connect\\backend\\data\\outputs\\Qwen-Qwen2.5-VL-72B-Instruct"
+  },
+  {
+    "timestamp": "2026-01-25T19:32:14.997053",
+    "provider": "modelscope",
+    "model": "qwen2.5-vl-72b-instruct",
+    "file_count": 1,
+    "success_count": 1,
+    "failed_count": 0,
+    "success": true,
+    "output_dir": "D:\\Application\\A_Develop\\SourceCode\\Py\\api_models_connect\\backend\\data\\outputs\\Qwen-Qwen2.5-VL-72B-Instruct"
+  },
+  {
+    "timestamp": "2026-01-25T19:24:55.065384",
+    "provider": "modelscope",
+    "model": "qwen2.5-vl-72b-instruct",
+    "file_count": 1,
+    "success_count": 1,
+    "failed_count": 0,
+    "success": true,
+    "output_dir": "D:\\Application\\A_Develop\\SourceCode\\Py\\api_models_connect\\backend\\data\\outputs\\Qwen-Qwen2.5-VL-72B-Instruct"
+  },
+  {
+    "timestamp": "2026-01-25T17:10:42.230110",
+    "provider": "modelscope",
+    "model": "qwen2.5-vl-72b-instruct",
+    "file_count": 1,
+    "success_count": 1,
+    "failed_count": 0,
+    "success": true,
+    "output_dir": "D:\\Application\\A_Develop\\SourceCode\\Py\\api_models_connect\\backend\\data\\outputs\\Qwen-Qwen2.5-VL-72B-Instruct"
+  },
+  {
+    "timestamp": "2026-01-25T16:32:33.826655",
+    "provider": "modelscope",
+    "model": "qwen2.5-vl-72b-instruct",
+    "file_count": 1,
+    "success_count": 1,
+    "failed_count": 0,
+    "success": true,
+    "output_dir": "D:\\Application\\A_Develop\\SourceCode\\Py\\api_models_connect\\backend\\data\\outputs\\Qwen-Qwen2.5-VL-72B-Instruct"
+  },
+  {
     "timestamp": "2026-01-22T17:28:44.767743",
     "provider": "modelscope",
     "model": "qwen2.5-vl-72b-instruct",

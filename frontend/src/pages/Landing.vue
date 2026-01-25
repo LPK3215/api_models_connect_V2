@@ -17,7 +17,7 @@ import {
   Wrench,
 } from 'lucide-vue-next'
 
-import { api } from '../lib/api'
+import { api, API_PATHS } from '../lib/api'
 import type { SystemStatus } from '../lib/types'
 import QuickRunner from '../components/QuickRunner.vue'
 import RealtimeViz from '../components/RealtimeViz.vue'
@@ -46,7 +46,7 @@ const statusOnline = ref(false)
 async function loadStatus() {
   statusLoading.value = true
   try {
-    const { data } = await api.get<SystemStatus>('/api/v1/system/status')
+    const { data } = await api.get<SystemStatus>(API_PATHS.systemStatus)
     status.value = data
     statusOnline.value = true
   } catch {
@@ -116,8 +116,8 @@ function providerConfigured(name: string) {
           </button>
         </div>
 
-        <button class="btn md:hidden" type="button" @click="toggleMenu" aria-label="Toggle navigation">
-          Menu
+        <button class="btn md:hidden" type="button" @click="toggleMenu" aria-label="切换导航">
+          菜单
         </button>
       </div>
 
@@ -181,10 +181,10 @@ function providerConfigured(name: string) {
                 class="ml-1 h-2 w-2 rounded-full"
                 :class="statusLoading ? 'bg-warn' : statusOnline ? 'bg-success' : 'bg-danger'"
               />
-              <span class="ml-1">{{ statusLoading ? 'checking' : statusOnline ? 'online' : 'offline' }}</span>
+              <span class="ml-1">{{ statusLoading ? '检测中' : statusOnline ? '在线' : '离线' }}</span>
             </span>
             <span v-if="status?.statistics" class="pill font-mono">
-              providers {{ status.statistics.providers }} | models {{ status.statistics.models }} | prompts {{ status.statistics.prompts }}
+              云平台 {{ status.statistics.providers }} | 模型 {{ status.statistics.models }} | 提示词 {{ status.statistics.prompts }}
             </span>
             <span class="pill font-mono">keys {{ configuredKeyCount }}/{{ totalKeyCount }}</span>
           </div>
@@ -387,7 +387,7 @@ function providerConfigured(name: string) {
     <section id="providers" class="mx-auto max-w-[86rem] px-4 pb-12 md:px-6 md:pb-16">
       <div class="grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
         <div>
-          <div class="text-xs font-semibold text-muted">Providers</div>
+          <div class="text-xs font-semibold text-muted">云平台</div>
           <h2 class="mt-2 text-2xl font-semibold tracking-tight">多云平台接入, 但密钥永远留在你本机.</h2>
           <p class="mt-3 text-sm text-muted">
             后端只读取环境变量, UI 只展示 configured/missing. 你之后要改配置方式, 也可以在这里继续演进.
@@ -456,7 +456,7 @@ function providerConfigured(name: string) {
         <div class="glass p-6">
           <div class="flex items-start justify-between gap-3">
             <div>
-              <div class="text-xs font-semibold text-muted">Example</div>
+          <div class="text-xs font-semibold text-muted">示例</div>
               <div class="mt-1 text-sm font-semibold">一次处理请求 (curl)</div>
             </div>
             <span class="pill">api</span>
@@ -477,7 +477,7 @@ function providerConfigured(name: string) {
       <div class="glass p-6">
         <div class="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
           <div class="min-w-0">
-            <div class="text-xs font-semibold text-muted">Get Started</div>
+          <div class="text-xs font-semibold text-muted">开始</div>
             <div class="mt-1 text-lg font-semibold">本地启动 (开发模式)</div>
             <div class="mt-2 text-sm text-muted">先跑后端, 再跑前端. 建议先跑一次环境检测脚本.</div>
           </div>

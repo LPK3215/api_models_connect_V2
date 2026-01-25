@@ -17,7 +17,7 @@ import time
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 from pathlib import Path
-from typing import Optional, Dict, Any, List
+from typing import Optional, Dict, Any, List, Callable
 
 from backend.core.config import (
     console, with_icon,
@@ -129,6 +129,7 @@ def _process_single_image_streaming(
         api_key: str,
         preprocessed_image_url: Optional[str] = None,
         enable_streaming_print: bool = True,
+        emit: Optional[Callable[[Dict[str, Any]], None]] = None,
 ) -> Dict[str, Any]:
     """
     处理单张图片（真实流式版本）
@@ -141,11 +142,30 @@ def _process_single_image_streaming(
     """
     client = get_client_pool().get_client(api_key, api_base_url, timeout)
     rate_limiter = get_rate_limiter()
+    log_output = bool(verbose or enable_streaming_print)
+
+    def _emit(payload: Dict[str, Any]) -> None:
+        if emit is None:
+            return
+        try:
+            emit(payload)
+        except Exception:
+            # 流式输出不应因 UI/回调失败而中断主流程
+            pass
 
     # 保留原有日志
     if verbose:
         console.blank()
         console.title(with_icon("camera", f"[{idx}/{total}] {image_path.name}"))
+
+    _emit(
+        {
+            "event": "image_start",
+            "index": idx,
+            "total": total,
+            "image_name": image_path.name,
+        }
+    )
 
     output_file = get_output_file_path(output_dir, image_path.stem, extension=".json")
     retry_count = 0
@@ -174,6 +194,16 @@ def _process_single_image_streaming(
                 )
                 preprocess_seconds = time.perf_counter() - t_pre
 
+            _emit(
+                {
+                    "event": "preprocess_done",
+                    "index": idx,
+                    "total": total,
+                    "image_name": image_path.name,
+                    "preprocess_seconds": round(preprocess_seconds, 4),
+                }
+            )
+
             # 构建消息
             messages = [{
                 "role": "user",
@@ -188,17 +218,30 @@ def _process_single_image_streaming(
             
             # ========== 真实流式调用 ==========
             t0 = time.perf_counter()
-            
+             
+            # 连接/握手耗时：从发起请求到拿到流式响应对象（通常等价于拿到响应头）
             stream = client.chat.completions.create(
                 model=model_name,
                 messages=messages,
                 stream=True  # 开启真实流式
             )
-            
+            t_connected = time.perf_counter()
+            connect_seconds = t_connected - t0
+            _emit(
+                {
+                    "event": "connect_done",
+                    "index": idx,
+                    "total": total,
+                    "image_name": image_path.name,
+                    "connect_seconds": round(connect_seconds, 4),
+                }
+            )
+             
             full_text = ""
             char_count = 0
             t_first = None
-            
+            thinking_seconds = None
+             
             # 流式接收并打印
             for chunk in stream:
                 # 提取 delta 内容
@@ -212,13 +255,34 @@ def _process_single_image_streaming(
                     # 记录 TTFT（第一个 token 到达时间）
                     if t_first is None:
                         t_first = time.perf_counter()
+                        thinking_seconds = t_first - t_connected
                         ttft = t_first - t0
-                        print(f"\n[TIME] TTFT={ttft:.3f}s", flush=True)
-                    
+                        if log_output:
+                            print(f"\n[TIME] TTFT={ttft:.3f}s", flush=True)
+                        _emit(
+                            {
+                                "event": "ttft",
+                                "index": idx,
+                                "total": total,
+                                "image_name": image_path.name,
+                                "ttft_seconds": round(ttft, 4),
+                                "thinking_seconds": round(thinking_seconds, 4),
+                            }
+                        )
+
                     # 打字机效果输出
                     if enable_streaming_print:
                         print(delta_content, end="", flush=True)
-                    
+                    _emit(
+                        {
+                            "event": "delta",
+                            "index": idx,
+                            "total": total,
+                            "image_name": image_path.name,
+                            "content": delta_content,
+                        }
+                    )
+                     
                     full_text += delta_content
                     char_count += len(delta_content)
             
@@ -228,29 +292,59 @@ def _process_single_image_streaming(
             # 如果没有收到任何内容
             if t_first is None:
                 t_first = t_end_stream
-                print(f"\n[TIME] TTFT=N/A (no content)", flush=True)
-            
+                if log_output:
+                    print(f"\n[TIME] TTFT=N/A (no content)", flush=True)
+
             # 打印流式结束统计
             gen_time = t_end_stream - t_first
             total_stream_time = t_end_stream - t0
-            print(f"\n[TIME] gen={gen_time:.3f}s total={total_stream_time:.3f}s chars={char_count}", flush=True)
-            
+            if log_output:
+                print(
+                    f"\n[TIME] gen={gen_time:.3f}s total={total_stream_time:.3f}s chars={char_count}",
+                    flush=True,
+                )
+            _emit(
+                {
+                    "event": "stream_done",
+                    "index": idx,
+                    "total": total,
+                    "image_name": image_path.name,
+                    "connect_seconds": round(connect_seconds, 4),
+                    "thinking_seconds": round(thinking_seconds or 0.0, 4),
+                    "gen_seconds": round(gen_time, 4),
+                    "stream_total_seconds": round(total_stream_time, 4),
+                    "char_count": char_count,
+                }
+            )
+
             # ========== JSON 后处理 ==========
             t_parse_start = time.perf_counter()
-            
+
             parsed_json, is_valid, error_reason = _extract_json_from_text(full_text)
             
             t_parse_end = time.perf_counter()
             parse_seconds = t_parse_end - t_parse_start
             
-            if is_valid:
-                print(f"[JSON] parse={parse_seconds:.3f}s valid=True", flush=True)
-            else:
-                print(f"[JSON] parse={parse_seconds:.3f}s valid=False reason={error_reason}", flush=True)
-            
+            if log_output:
+                if is_valid:
+                    print(f"[JSON] parse={parse_seconds:.3f}s valid=True", flush=True)
+                else:
+                    print(f"[JSON] parse={parse_seconds:.3f}s valid=False reason={error_reason}", flush=True)
+            _emit(
+                {
+                    "event": "parse_done",
+                    "index": idx,
+                    "total": total,
+                    "image_name": image_path.name,
+                    "parse_seconds": round(parse_seconds, 4),
+                    "json_valid": bool(is_valid),
+                    "error_reason": "" if is_valid else error_reason,
+                }
+            )
+
             # ========== 保存结果 ==========
             t_save_start = time.perf_counter()
-            
+
             if is_valid:
                 # JSON 解析成功，正常保存
                 save_result(
@@ -259,46 +353,75 @@ def _process_single_image_streaming(
                 )
                 t_save_end = time.perf_counter()
                 save_seconds = t_save_end - t_save_start
-                print(f"[SAVE] save={save_seconds:.3f}s path={output_file}", flush=True)
-                
+                if log_output:
+                    print(f"[SAVE] save={save_seconds:.3f}s path={output_file}", flush=True)
+
                 # 保留原有日志
                 if verbose:
                     console.success(with_icon("save", f"已保存 {output_file.name}"))
             else:
                 # JSON 解析失败，保存备份
-                print(f"[ERR] JSON_PARSE_FAILED reason={error_reason}", flush=True)
-                
+                if log_output:
+                    print(f"[ERR] JSON_PARSE_FAILED reason={error_reason}", flush=True)
+
                 # 保存 .txt 备份
                 backup_file = _save_backup_txt(output_dir, image_path.stem, full_text)
-                
+
                 # 同时保存带错误信息的 JSON
                 save_result(
                     output_file, image_path, model_name, model_info, prompt,
                     error_msg=f"JSON解析失败: {error_reason}",
                     raw_response=full_text,
                 )
-                
+
                 t_save_end = time.perf_counter()
                 save_seconds = t_save_end - t_save_start
-                print(f"[SAVE] save={save_seconds:.3f}s backup={backup_file}", flush=True)
-                
+                if log_output:
+                    print(f"[SAVE] save={save_seconds:.3f}s backup={backup_file}", flush=True)
+
                 if verbose:
                     console.warning(with_icon("warning", f"JSON解析失败，已保存备份: {backup_file.name}"))
-            
+
             # ========== 全链路耗时 ==========
             all_time = t_save_end - t0
-            print(f"[TIME] all={all_time:.3f}s", flush=True)
-            
+            if log_output:
+                print(f"[TIME] all={all_time:.3f}s", flush=True)
+
+            status = "success" if is_valid else "json_parse_failed"
+            _emit(
+                {
+                    "event": "image_done",
+                    "index": idx,
+                    "total": total,
+                    "image_name": image_path.name,
+                    "status": status,
+                    "output_file": str(output_file),
+                    "timings": {
+                        "preprocess_seconds": round(preprocess_seconds, 4),
+                        "connect_seconds": round(connect_seconds, 4),
+                        "thinking_seconds": round(thinking_seconds or 0.0, 4),
+                        "ttft_seconds": round((t_first - t0) if t_first else 0, 4),
+                        "gen_seconds": round(gen_time, 4),
+                        "stream_total_seconds": round(total_stream_time, 4),
+                        "parse_seconds": round(parse_seconds, 4),
+                        "save_seconds": round(save_seconds, 4),
+                        "all_seconds": round(all_time, 4),
+                    },
+                }
+            )
+
             # 返回结果
             return {
                 "index": idx, 
                 "image_name": image_path.name,
-                "status": "success" if is_valid else "json_parse_failed",
+                "status": status,
                 "output_file": str(output_file), 
                 "retries": retry_count,
                 "json_valid": is_valid,
                 "timings": {
                     "preprocess_seconds": round(preprocess_seconds, 4),
+                    "connect_seconds": round(connect_seconds, 4),
+                    "thinking_seconds": round(thinking_seconds or 0.0, 4),
                     "ttft_seconds": round((t_first - t0) if t_first else 0, 4),
                     "gen_seconds": round(gen_time, 4),
                     "stream_total_seconds": round(total_stream_time, 4),
@@ -317,11 +440,27 @@ def _process_single_image_streaming(
             current_time = time.perf_counter()
             elapsed = current_time - t0 if t0 else 0
             
-            print(f"[ERR] EXCEPTION retry={retry_count}/{max_retries} elapsed={elapsed:.3f}s error={error_msg}", flush=True)
-            
+            if log_output:
+                print(
+                    f"[ERR] EXCEPTION retry={retry_count}/{max_retries} elapsed={elapsed:.3f}s error={error_msg}",
+                    flush=True,
+                )
+            _emit(
+                {
+                    "event": "exception",
+                    "index": idx,
+                    "total": total,
+                    "image_name": image_path.name,
+                    "retry": retry_count,
+                    "max_retries": max_retries,
+                    "elapsed_seconds": round(elapsed, 4),
+                    "error": error_msg,
+                }
+            )
+
             if verbose:
                 console.error(with_icon("error", f"错误: {error_msg}"))
-            
+
             if retry_count > max_retries:
                 # 保存错误信息
                 t_save_start = time.perf_counter()
@@ -329,20 +468,36 @@ def _process_single_image_streaming(
                 # 如果有部分输出，保存备份
                 if 'full_text' in locals() and full_text:
                     backup_file = _save_backup_txt(output_dir, image_path.stem, full_text)
-                    print(f"[SAVE] backup={backup_file}", flush=True)
-                
+                    if log_output:
+                        print(f"[SAVE] backup={backup_file}", flush=True)
+
                 save_result(
                     output_file, image_path, model_name, model_info, prompt,
                     error_msg=error_msg, raw_response=locals().get("full_text"),
                 )
-                
+
                 t_save_end = time.perf_counter()
                 save_seconds = t_save_end - t_save_start
-                print(f"[SAVE] error_save={save_seconds:.3f}s path={output_file}", flush=True)
-                
+                if log_output:
+                    print(f"[SAVE] error_save={save_seconds:.3f}s path={output_file}", flush=True)
+
                 all_time = t_save_end - t0 if t0 else elapsed
-                print(f"[TIME] all={all_time:.3f}s (failed)", flush=True)
-                
+                if log_output:
+                    print(f"[TIME] all={all_time:.3f}s (failed)", flush=True)
+
+                _emit(
+                    {
+                        "event": "image_done",
+                        "index": idx,
+                        "total": total,
+                        "image_name": image_path.name,
+                        "status": "failed",
+                        "output_file": str(output_file),
+                        "error": error_msg,
+                        "timings": {"elapsed_before_fail": round(elapsed, 4)},
+                    }
+                )
+
                 return {
                     "index": idx, 
                     "image_name": image_path.name,
@@ -354,7 +509,7 @@ def _process_single_image_streaming(
                         "elapsed_before_fail": round(elapsed, 4),
                     },
                 }
-            
+             
             time.sleep(retry_delay)
 
     # 不应该到达这里
@@ -389,6 +544,8 @@ def _process_single_image(
         api_key: str,
         preprocessed_image_url: Optional[str] = None,
         use_streaming: bool = True,
+        enable_streaming_print: bool = True,
+        emit: Optional[Callable[[Dict[str, Any]], None]] = None,
 ) -> Dict[str, Any]:
     """
     处理单张图片（入口函数）
@@ -415,7 +572,8 @@ def _process_single_image(
             output_dir=output_dir,
             api_key=api_key,
             preprocessed_image_url=preprocessed_image_url,
-            enable_streaming_print=True,
+            enable_streaming_print=enable_streaming_print,
+            emit=emit,
         )
     
     # 非流式版本（保留原有逻辑）
@@ -524,6 +682,8 @@ def process_images_with_cloud_api(
         max_workers: int = DEFAULT_MAX_WORKERS,
         api_key_env: Optional[str] = None,
         use_streaming: bool = True,
+        enable_streaming_print: bool = True,
+        emit: Optional[Callable[[Dict[str, Any]], None]] = None,
 ):
     """对输入文件夹中的图片逐张调用云API模型，保存结果并返回统计信息"""
     project_root = get_project_root()
@@ -568,27 +728,43 @@ def process_images_with_cloud_api(
     total = len(image_files)
 
     # 并行预处理所有图片
-    preprocessed_images = {}
-    if max_workers > 1:
-        with ThreadPoolExecutor(max_workers=max_workers) as executor:
-            futures = {
-                executor.submit(_preprocess_image, img, max_image_size, max_file_size_mb, enable_compression,
-                                False): img
-                for img in image_files
-            }
-            for future in futures:
-                img = futures[future]
+    # 注意：流式模式下为了输出更清晰且需要精确计时（含 preprocess），这里不做提前预处理。
+    preprocessed_images: Dict[Path, Optional[str]] = {}
+    if use_streaming:
+        for img in image_files:
+            preprocessed_images[img] = None
+    else:
+        if max_workers > 1:
+            with ThreadPoolExecutor(max_workers=max_workers) as executor:
+                futures = {
+                    executor.submit(
+                        _preprocess_image,
+                        img,
+                        max_image_size,
+                        max_file_size_mb,
+                        enable_compression,
+                        False,
+                    ): img
+                    for img in image_files
+                }
+                for future in futures:
+                    img = futures[future]
+                    try:
+                        preprocessed_images[img] = future.result()
+                    except Exception:
+                        preprocessed_images[img] = None
+        else:
+            for img in image_files:
                 try:
-                    preprocessed_images[img] = future.result()
+                    preprocessed_images[img] = _preprocess_image(
+                        img,
+                        max_image_size,
+                        max_file_size_mb,
+                        enable_compression,
+                        False,
+                    )
                 except Exception:
                     preprocessed_images[img] = None
-    else:
-        for img in image_files:
-            try:
-                preprocessed_images[img] = _preprocess_image(img, max_image_size, max_file_size_mb, enable_compression,
-                                                             False)
-            except Exception:
-                preprocessed_images[img] = None
 
     # 处理图片（流式模式下建议串行，避免输出混乱）
     if use_streaming:
@@ -598,7 +774,10 @@ def process_images_with_cloud_api(
                 img, idx, total, model_name, model_info, prompt,
                 max_image_size, max_file_size_mb, request_delay, max_retries, retry_delay,
                 api_base_url, timeout, enable_compression, verbose, output_dir, api_key,
-                preprocessed_images[img], use_streaming=True
+                preprocessed_images[img],
+                use_streaming=True,
+                enable_streaming_print=enable_streaming_print,
+                emit=emit,
             )
             run_records.append(result)
             if result["status"] == "success":

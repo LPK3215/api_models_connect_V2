@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run FastAPI backend (development)."""
+"""启动 FastAPI 后端（开发模式）。"""
 
 from __future__ import annotations
 
@@ -30,8 +30,8 @@ def main() -> None:
     port = int(os.getenv("API_PORT") or DEFAULT_PORT)
     if not is_port_available(port):
         raise SystemExit(
-            f"Port {port} is already in use. "
-            f"Set API_PORT to a free port (and update frontend/.env.development -> VITE_API_ORIGIN)."
+            f"端口 {port} 已被占用。"
+            f"请设置 API_PORT 为可用端口，并同步修改 frontend/.env.development -> VITE_API_ORIGIN。"
         )
 
     uvicorn.run(

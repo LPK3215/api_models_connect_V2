@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import { api } from '../lib/api'
+import { api, API_PATHS } from '../lib/api'
 import type { PromptDetail, PromptListItem } from '../lib/types'
 
 const items = ref<PromptListItem[]>([])
@@ -18,13 +18,13 @@ const form = ref({
 })
 
 async function loadList() {
-  const { data } = await api.get<{ items: PromptListItem[] }>('/api/v1/prompts')
+  const { data } = await api.get<{ items: PromptListItem[] }>(API_PATHS.prompts)
   items.value = data.items
 }
 
 async function loadDetail(id: string) {
   if (!id) return
-  const { data } = await api.get<PromptDetail>(`/api/v1/prompts/${id}`)
+  const { data } = await api.get<PromptDetail>(`${API_PATHS.prompts}/${id}`)
   detail.value = data
   form.value.name = data.name || ''
   form.value.category = data.category || '通用'
@@ -43,7 +43,7 @@ async function save() {
   busy.value = true
   error.value = null
   try {
-    await api.post('/api/v1/prompts', {
+    await api.post(API_PATHS.prompts, {
       name: form.value.name,
       category: form.value.category,
       description: form.value.description,
@@ -53,7 +53,7 @@ async function save() {
 
     await loadList()
   } catch (e: any) {
-    error.value = e?.response?.data?.detail || e?.message || 'Save failed'
+    error.value = e?.response?.data?.detail || e?.message || '保存失败'
   } finally {
     busy.value = false
   }
@@ -64,11 +64,11 @@ async function remove() {
   busy.value = true
   error.value = null
   try {
-    await api.delete(`/api/v1/prompts/${detail.value.id}`)
+    await api.delete(`${API_PATHS.prompts}/${detail.value.id}`)
     await loadList()
     newPrompt()
   } catch (e: any) {
-    error.value = e?.response?.data?.detail || e?.message || 'Delete failed'
+    error.value = e?.response?.data?.detail || e?.message || '删除失败'
   } finally {
     busy.value = false
   }
@@ -79,13 +79,13 @@ onMounted(loadList)
 
 <template>
   <section class="animate-fadeUp">
-    <div class="panel">
+      <div class="panel">
       <div class="panel-header">
         <div>
-          <div class="text-lg font-semibold">Prompts</div>
-          <div class="text-sm text-muted">Curate reusable extraction prompts.</div>
+          <div class="text-lg font-semibold">提示词库</div>
+          <div class="text-sm text-muted">管理可复用的抽取提示词。</div>
         </div>
-        <button class="btn" @click="newPrompt">New</button>
+        <button class="btn" @click="newPrompt">新建</button>
       </div>
 
       <div class="panel-body space-y-4">
@@ -94,7 +94,7 @@ onMounted(loadList)
         <div class="grid grid-cols-1 gap-4 lg:grid-cols-[320px_1fr]">
           <div class="panel">
             <div class="panel-header">
-              <div class="text-sm font-semibold">Library</div>
+              <div class="text-sm font-semibold">列表</div>
               <span class="pill">{{ items.length }}</span>
             </div>
             <div class="max-h-[520px] overflow-auto p-2">
@@ -113,38 +113,38 @@ onMounted(loadList)
 
           <div class="panel">
             <div class="panel-header">
-              <div class="text-sm font-semibold">Editor</div>
+              <div class="text-sm font-semibold">编辑</div>
               <div class="flex items-center gap-2">
-                <button class="btn btn-primary" @click="save" :disabled="busy">Save</button>
-                <button class="btn btn-danger" @click="remove" :disabled="busy || !detail?.id">Delete</button>
+                <button class="btn btn-primary" @click="save" :disabled="busy">保存</button>
+                <button class="btn btn-danger" @click="remove" :disabled="busy || !detail?.id">删除</button>
               </div>
             </div>
 
             <div class="panel-body space-y-3">
               <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
                 <div class="space-y-2">
-                  <label class="text-xs font-semibold text-muted">Name</label>
-                  <input class="input" v-model="form.name" placeholder="e.g. Invoice Extraction" />
+                  <label class="text-xs font-semibold text-muted">名称</label>
+                  <input class="input" v-model="form.name" placeholder="例如：发票抽取" />
                 </div>
                 <div class="space-y-2">
-                  <label class="text-xs font-semibold text-muted">Category</label>
+                  <label class="text-xs font-semibold text-muted">分类</label>
                   <input class="input" v-model="form.category" placeholder="通用" />
                 </div>
               </div>
 
               <div class="space-y-2">
-                <label class="text-xs font-semibold text-muted">Description</label>
-                <input class="input" v-model="form.description" placeholder="Short description..." />
+                <label class="text-xs font-semibold text-muted">描述</label>
+                <input class="input" v-model="form.description" placeholder="简短描述..." />
               </div>
 
               <div class="space-y-2">
-                <label class="text-xs font-semibold text-muted">Tags (comma separated)</label>
-                <input class="input" v-model="form.tags" placeholder="JSON, OCR, invoice" />
+                <label class="text-xs font-semibold text-muted">标签（逗号分隔）</label>
+                <input class="input" v-model="form.tags" placeholder="JSON, OCR, 发票" />
               </div>
 
               <div class="space-y-2">
-                <label class="text-xs font-semibold text-muted">Prompt</label>
-                <textarea class="input min-h-[280px] font-mono" v-model="form.prompt" placeholder="Write your prompt..." />
+                <label class="text-xs font-semibold text-muted">提示词内容</label>
+                <textarea class="input min-h-[280px] font-mono" v-model="form.prompt" placeholder="在这里编写提示词..." />
               </div>
             </div>
           </div>

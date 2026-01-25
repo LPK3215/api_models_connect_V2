@@ -9,9 +9,9 @@ import QuickRunner from '../components/QuickRunner.vue'
   <section class="animate-fadeUp">
     <div class="flex flex-col items-start justify-between gap-3 md:flex-row md:items-center">
       <div>
-        <div class="text-xs font-semibold text-muted">Run</div>
-        <div class="mt-1 text-2xl font-semibold tracking-tight">Task Runner</div>
-        <div class="mt-1 text-sm text-muted">Upload images, pick a model, run extraction.</div>
+        <div class="text-xs font-semibold text-muted">运行</div>
+        <div class="mt-1 text-2xl font-semibold tracking-tight">任务运行器</div>
+        <div class="mt-1 text-sm text-muted">上传图片，选择模型与提示词，执行抽取。</div>
       </div>
       <RouterLink class="btn btn-primary" to="/history">
         查看运行历史
@@ -24,4 +24,3 @@ import QuickRunner from '../components/QuickRunner.vue'
     </div>
   </section>
 </template>
-

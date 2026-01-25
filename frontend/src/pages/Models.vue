@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
-import { api } from '../lib/api'
+import { api, API_PATHS } from '../lib/api'
 import type { ModelItem, ProviderItem } from '../lib/types'
 
 const providers = ref<ProviderItem[]>([])
@@ -14,7 +14,7 @@ const providerLabel = computed(
 )
 
 async function loadProviders() {
-  const { data } = await api.get<{ items: ProviderItem[] }>('/api/v1/providers')
+  const { data } = await api.get<{ items: ProviderItem[] }>(API_PATHS.providers)
   providers.value = data.items
 }
 
@@ -24,10 +24,10 @@ async function loadModels() {
   if (!providerKey.value) return
   loading.value = true
   try {
-    const { data } = await api.get<{ items: ModelItem[] }>(`/api/v1/providers/${providerKey.value}/models`)
+    const { data } = await api.get<{ items: ModelItem[] }>(`${API_PATHS.providers}/${providerKey.value}/models`)
     models.value = data.items
   } catch (e: any) {
-    error.value = e?.message || 'Failed to load'
+    error.value = e?.message || '加载失败'
   } finally {
     loading.value = false
   }
@@ -41,23 +41,23 @@ onMounted(loadProviders)
     <div class="panel">
       <div class="panel-header">
         <div>
-          <div class="text-lg font-semibold">Models</div>
-          <div class="text-sm text-muted">Inspect configured providers and model pool.</div>
+          <div class="text-lg font-semibold">模型池</div>
+          <div class="text-sm text-muted">按云平台查看模型池与关键配置。</div>
         </div>
       </div>
 
       <div class="panel-body space-y-4">
         <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
           <div class="space-y-2">
-            <label class="text-xs font-semibold text-muted">Provider</label>
+            <label class="text-xs font-semibold text-muted">云平台</label>
             <select class="input" v-model="providerKey" @change="loadModels">
-              <option value="" disabled>Select provider...</option>
+              <option value="" disabled>请选择云平台...</option>
               <option v-for="p in providers" :key="p.key" :value="p.key">{{ p.display_name }}</option>
             </select>
           </div>
 
           <div class="rounded-xl border border-border/50 bg-panel2/15 p-3">
-            <div class="text-xs text-muted">Selected</div>
+            <div class="text-xs text-muted">当前选择</div>
             <div class="mt-1 text-sm font-semibold">{{ providerLabel || '—' }}</div>
           </div>
         </div>
@@ -68,11 +68,11 @@ onMounted(loadProviders)
 
         <div class="grid grid-cols-1 gap-3">
           <div v-if="loading" class="rounded-xl border border-border/50 bg-panel2/15 p-4 text-sm text-muted">
-            Loading...
+            加载中...
           </div>
 
           <div v-else-if="!models.length" class="rounded-xl border border-border/50 bg-panel2/15 p-4 text-sm text-muted">
-            Select a provider to see its model pool.
+            请选择云平台以查看模型池。
           </div>
 
           <div v-else class="grid grid-cols-1 gap-3 lg:grid-cols-2">
@@ -87,7 +87,7 @@ onMounted(loadProviders)
               <div class="panel-body space-y-2">
                 <div class="text-sm text-muted">{{ m.info }}</div>
                 <div class="rounded-xl border border-border/50 bg-panel2/15 p-3">
-                  <div class="text-xs text-muted">Env Key</div>
+                  <div class="text-xs text-muted">环境变量键</div>
                   <div class="mt-1 font-mono text-xs text-text">{{ m.env_key || '—' }}</div>
                 </div>
                 <div class="rounded-xl border border-border/50 bg-panel2/15 p-3">

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, nextTick, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { api } from '../lib/api'
+import { api, API_PATHS } from '../lib/api'
 import type { TaskHistoryRecord } from '../lib/types'
 
 const route = useRoute()
@@ -24,19 +24,19 @@ async function load() {
   loading.value = true
   error.value = null
   try {
-    const { data } = await api.get<{ items: TaskHistoryRecord[] }>('/api/v1/history')
+    const { data } = await api.get<{ items: TaskHistoryRecord[] }>(API_PATHS.history)
     items.value = data.items
     await nextTick()
     if (matchEl.value) matchEl.value.scrollIntoView({ behavior: 'smooth', block: 'center' })
   } catch (e: any) {
-    error.value = e?.message || 'Failed to load'
+    error.value = e?.message || '加载失败'
   } finally {
     loading.value = false
   }
 }
 
 async function clear() {
-  await api.delete('/api/v1/history')
+  await api.delete(API_PATHS.history)
   await load()
 }
 
@@ -48,33 +48,33 @@ onMounted(load)
     <div class="panel">
       <div class="panel-header">
         <div>
-          <div class="text-lg font-semibold">History</div>
-          <div class="text-sm text-muted">Last 100 runs (recorded by backend).</div>
+          <div class="text-lg font-semibold">历史记录</div>
+          <div class="text-sm text-muted">最近 100 次运行（由后端记录）。</div>
         </div>
         <div class="flex items-center gap-2">
-          <button class="btn" @click="load" :disabled="loading">Refresh</button>
-          <button class="btn btn-danger" @click="clear" :disabled="loading || !items.length">Clear</button>
+          <button class="btn" @click="load" :disabled="loading">刷新</button>
+          <button class="btn btn-danger" @click="clear" :disabled="loading || !items.length">清空</button>
         </div>
       </div>
 
       <div class="panel-body">
         <div v-if="error" class="rounded-xl border border-danger/40 bg-danger/10 p-3 text-sm text-danger">{{ error }}</div>
 
-        <div v-else-if="loading" class="text-sm text-muted">Loading...</div>
+        <div v-else-if="loading" class="text-sm text-muted">加载中...</div>
 
-        <div v-else-if="!items.length" class="text-sm text-muted">No history yet.</div>
+        <div v-else-if="!items.length" class="text-sm text-muted">暂无历史记录。</div>
 
         <div v-else class="overflow-auto rounded-xl border border-border/50">
           <table class="w-full min-w-[720px] border-collapse text-left text-sm">
             <thead class="bg-panel2/25 text-muted">
               <tr>
                 <th class="px-3 py-2 font-semibold">Time</th>
-                <th class="px-3 py-2 font-semibold">Provider</th>
-                <th class="px-3 py-2 font-semibold">Model</th>
-                <th class="px-3 py-2 font-semibold">Files</th>
-                <th class="px-3 py-2 font-semibold">OK</th>
-                <th class="px-3 py-2 font-semibold">Fail</th>
-                <th class="px-3 py-2 font-semibold">Output</th>
+                <th class="px-3 py-2 font-semibold">云平台</th>
+                <th class="px-3 py-2 font-semibold">模型</th>
+                <th class="px-3 py-2 font-semibold">文件数</th>
+                <th class="px-3 py-2 font-semibold">成功</th>
+                <th class="px-3 py-2 font-semibold">失败</th>
+                <th class="px-3 py-2 font-semibold">输出目录</th>
               </tr>
             </thead>
             <tbody>
